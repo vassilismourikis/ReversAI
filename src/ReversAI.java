@@ -15,8 +15,13 @@ public class ReversAI implements ActionListener{
 	JButton[] buttons = new JButton[64];
 	boolean isBlack=true; //True means that player is the black (playing first)
 	private static int grayCount=0;
+	private boolean playerIsBlack;
+	private int minimaxDepth;
 
-	ReversAI(){
+	ReversAI(boolean playerstarts, int minimaxDepth){
+		this.playerIsBlack=playerstarts;
+		this.minimaxDepth=minimaxDepth;
+		System.out.println("Player is black: "+playerIsBlack + "\nDepth: " + minimaxDepth);
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(800,800);
@@ -28,7 +33,7 @@ public class ReversAI implements ActionListener{
 		textfield.setForeground(new Color(25,255,0));
 		textfield.setFont(new Font("MV Boli",Font.PLAIN,75));
 		textfield.setHorizontalAlignment(JLabel.CENTER);
-		textfield.setText("ReversAI");
+		textfield.setText("Black's Turn");
 		textfield.setOpaque(true);
 		
 		title_panel.setLayout(new BorderLayout());
@@ -462,7 +467,7 @@ public class ReversAI implements ActionListener{
 					if(buttons[i].getIcon()==null || buttons[i].getFont().getName().equals("G")) {
 						placeDisk(i,"B");
 						isBlack=false;
-						textfield.setText("AI turn");
+						textfield.setText("White's turn");
 						flipDisks();
 					}
 				}
@@ -470,7 +475,7 @@ public class ReversAI implements ActionListener{
 					if(buttons[i].getIcon()==null || buttons[i].getFont().getName().equals("G")) {
 						placeDisk(i,"W");
 						isBlack=true;
-						textfield.setText("Player turn");
+						textfield.setText("Black's turn");
 						flipDisks();
 					}
 				}
