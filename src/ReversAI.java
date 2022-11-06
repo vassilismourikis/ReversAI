@@ -13,10 +13,11 @@ public class ReversAI implements ActionListener{
 	JPanel button_panel = new JPanel();
 	JLabel textfield = new JLabel();
 	JButton[] buttons = new JButton[64];
-	boolean isBlack=true; //True means that player is the black (playing first)
+	boolean isBlack=true; //It's black's turn
 	private static int grayCount=0;
 	private boolean playerIsBlack;
 	private int minimaxDepth;
+	private boolean blackHasMoves,whiteHasMoves=true;
 
 	ReversAI(boolean playerstarts, int minimaxDepth){
 		this.playerIsBlack=playerstarts;
@@ -419,7 +420,26 @@ public class ReversAI implements ActionListener{
 
 	//Checks the board to find out if the game is over
 	public void checkGame(){
-
+		if(!blackHasMoves && !whiteHasMoves){
+			endGame();
+		}
+	}
+	public void endGame(){
+		int black_disks=0,white_disks=0;
+		for(int i=0;i<64;i++) {
+			if(buttons[i].getFont().getName().equals("B")) {
+				black_disks++;
+			}else if(buttons[i].getFont().getName().equals("W")){
+				white_disks++;
+			}
+		}
+		if(black_disks>white_disks){
+			textfield.setText("Black WINS \n"+ black_disks + " vs " + white_disks);
+		}else if(black_disks<white_disks){
+			textfield.setText("White WINS \n"+ white_disks + " vs " + black_disks);
+		}else{
+			textfield.setText("It's a DRAW");
+		}
 	}
 
 	//Places (or removes) disk. You need to give i for buttons possition ang "B"/"W"/"G"/"" for color ("" for removing disk in case of possible moves generation)
@@ -464,7 +484,7 @@ public class ReversAI implements ActionListener{
 		for(int i=0;i<64;i++) {
 			if(e.getSource()==buttons[i]) {
 				if(isBlack) {
-					if(buttons[i].getIcon()==null || buttons[i].getFont().getName().equals("G")) {
+					if(buttons[i].getFont().getName().equals("G")) {
 						placeDisk(i,"B");
 						isBlack=false;
 						textfield.setText("White's turn");
@@ -472,7 +492,7 @@ public class ReversAI implements ActionListener{
 					}
 				}
 				else {
-					if(buttons[i].getIcon()==null || buttons[i].getFont().getName().equals("G")) {
+					if(buttons[i].getFont().getName().equals("G")) {
 						placeDisk(i,"W");
 						isBlack=true;
 						textfield.setText("Black's turn");
@@ -481,7 +501,34 @@ public class ReversAI implements ActionListener{
 				}
 			}			
 		}
-		//TODO: Logic for no available moves.
 		possibleMoves();
+		System.out.println(grayCount);
+		if(isBlack && grayCount==0){
+			blackHasMoves=false;
+			isBlack=!isBlack;
+			textfield.setText("White's turn");
+			possibleMoves();
+			if(grayCount!=0){
+				whiteHasMoves=true;
+			}else{
+				whiteHasMoves=false;
+				checkGame();
+			} 
+		}else if(!isBlack && grayCount==0){
+			whiteHasMoves=false;
+			isBlack=!isBlack;
+			textfield.setText("Black's turn");
+			possibleMoves();
+			if(grayCount!=0){
+				blackHasMoves=true;
+			}else{
+				blackHasMoves=false;
+				checkGame();
+			}
+		}else if(isBlack && grayCount!=0){
+			blackHasMoves=true;
+		}else if(!isBlack && grayCount!=0){
+			whiteHasMoves=true;
+		}
 	}
 }
