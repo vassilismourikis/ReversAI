@@ -98,7 +98,7 @@ public class ReversAI implements ActionListener{
 				if(i%8!=0){
 				j=i-1;
 				flipable=false;
-				while(buttons[j].getFont().getName().equals(oponentsColor) && j>=i-(i%8)){
+				while(buttons[j].getFont().getName().equals(oponentsColor) && j>i-(i%8)){
 					j--;
 					if(buttons[j].getFont().getName().equals(ourColor)){
 						flipable=true;
@@ -254,7 +254,7 @@ public class ReversAI implements ActionListener{
 				if(i%8!=0){
 				j=i-1;
 				flipable=false;
-				while(buttons[j].getFont().getName().equals(oponentsColor) && j>=i-(i%8)){
+				while(buttons[j].getFont().getName().equals(oponentsColor) && j>i-(i%8)){
 					j--;
 					if(buttons[j].getFont().getName().equals(ourColor)){
 						flipable=true;
