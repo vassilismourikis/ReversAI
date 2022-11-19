@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.text.StyledEditorKit.BoldAction;
 
 public class ReversAI implements ActionListener{
 
@@ -65,8 +66,325 @@ public class ReversAI implements ActionListener{
 	}
 
 	//Flips disks after player's move
-    public void flipDisks(){
-        
+    public void flipDisks(int i){
+		String oponentsColor="";
+		String ourColor="";
+		int j;
+		Boolean flipable=false;
+		if(isBlack){
+			ourColor="B";
+			oponentsColor="W";
+
+			//checking for RIGHT direction--------------------
+			if((i+1)%8!=0){
+				j=i+1;
+				flipable=false;
+				while(buttons[j].getFont().getName().equals(oponentsColor) && j<=i+8-(i%8+1)){
+					j++;
+					if(buttons[j].getFont().getName().equals(ourColor)){
+						flipable=true;
+					}
+				}
+				j=i+1;
+				if(flipable){
+					while(buttons[j].getFont().getName().equals(oponentsColor)){
+						placeDisk(j,ourColor);
+						j++;
+					}
+				}
+			}
+				//checking for RIGHT direction--------------------
+				//checking for LEFT direction--------------------
+				if(i%8!=0){
+				j=i-1;
+				flipable=false;
+				while(buttons[j].getFont().getName().equals(oponentsColor) && j>=i-(i%8)){
+					j--;
+					if(buttons[j].getFont().getName().equals(ourColor)){
+						flipable=true;
+					}
+				}
+				j=i-1;
+				if(flipable){
+					while(buttons[j].getFont().getName().equals(oponentsColor)){
+						placeDisk(j,ourColor);
+						j--;
+					}
+				}
+			}
+				//checking for LEFT direction--------------------
+				//checking for UP direction--------------------
+				if(i>=8){
+				j=i-8;
+				flipable=false;
+				while(buttons[j].getFont().getName().equals(oponentsColor) && j>=8){
+					j-=8;
+					if(buttons[j].getFont().getName().equals(ourColor)){
+						flipable=true;
+					}
+				}
+				j=i-8;
+				if(flipable){
+					while(buttons[j].getFont().getName().equals(oponentsColor)){
+						placeDisk(j,ourColor);
+						j-=8;
+					}
+				}
+			}
+				//checking for UP direction--------------------
+				//checking for DOWN direction--------------------
+				if(i<=55){
+				j=i+8;
+				flipable=false;
+				while(buttons[j].getFont().getName().equals(oponentsColor) && j<=55){
+					j+=8;
+					if(buttons[j].getFont().getName().equals(ourColor)){
+						flipable=true;
+					}
+				}
+				j=i+8;
+				if(flipable){
+					while(buttons[j].getFont().getName().equals(oponentsColor)){
+						placeDisk(j,ourColor);
+						j+=8;
+					}
+				}
+			}
+				//checking for DOWN direction--------------------
+				//checking for LEFT UP DIAGONAL direction--------------------
+				if(i>=8 && i%8!=0){
+				j=i-9;
+				flipable=false;
+				while(buttons[j].getFont().getName().equals(oponentsColor) && j%8!=0 && j>=8){
+					j-=9;
+					if(buttons[j].getFont().getName().equals(ourColor)){
+						flipable=true;
+					}
+				}
+				j=i-9;
+				if(flipable){
+					while(buttons[j].getFont().getName().equals(oponentsColor)){
+						placeDisk(j,ourColor);
+						j-=9;
+					}
+				}
+			}
+				//checking for LEFT UP DIAGONAL direction--------------------
+				//checking for LEFT DOWN DIAGONAL direction--------------------
+				if(i<=55 && i%8!=0){
+				j=i+7;
+				flipable=false;
+				while(buttons[j].getFont().getName().equals(oponentsColor) && j%8!=0 && j<=55){
+					j+=7;
+					if(buttons[j].getFont().getName().equals(ourColor)){
+						flipable=true;
+					}
+				}
+				j=i+7;
+				if(flipable){
+					while(buttons[j].getFont().getName().equals(oponentsColor)){
+						placeDisk(j,ourColor);
+						j+=7;
+					}
+				}
+			}
+				//checking for LEFT DOWN DIAGONAL direction--------------------
+				//checking for RIGHT UP DIAGONAL direction--------------------
+				if((i+1)%8!=0 && i>=8){
+				j=i-7;
+				flipable=false;
+				while(buttons[j].getFont().getName().equals(oponentsColor) && j%8!=7 && j>=8){
+					j-=7;
+					if(buttons[j].getFont().getName().equals(ourColor)){
+						flipable=true;
+					}
+				}
+				j=i-7;
+				if(flipable){
+					while(buttons[j].getFont().getName().equals(oponentsColor)){
+						placeDisk(j,ourColor);
+						j-=7;
+					}
+				}
+			}
+				//checking for RIGHT UP DIAGONAL direction--------------------
+				//checking for RIGHT DOWN DIAGONAL direction--------------------
+				if((i+1)%8!=0 && i<=55){
+				j=i+9;
+				flipable=false;
+				while(buttons[j].getFont().getName().equals(oponentsColor) && j%8!=7 && j<=54){
+					j+=9;
+					if(buttons[j].getFont().getName().equals(ourColor)){
+						flipable=true;
+					}
+				}
+				j=i+9;
+				if(flipable){
+					while(buttons[j].getFont().getName().equals(oponentsColor)){
+						placeDisk(j,ourColor);
+						j+=9;
+					}
+				}
+			}
+				//checking for RIGHT DOWN DIAGONAL direction--------------------
+		}else{
+			ourColor="W";
+			oponentsColor="B";
+
+			//checking for RIGHT direction--------------------
+			if((i+1)%8!=0){
+				j=i+1;
+				flipable=false;
+				while(buttons[j].getFont().getName().equals(oponentsColor) && j<=i+8-(i%8+1)){
+					j++;
+					if(buttons[j].getFont().getName().equals(ourColor)){
+						flipable=true;
+					}
+				}
+				j=i+1;
+				if(flipable){
+					while(buttons[j].getFont().getName().equals(oponentsColor)){
+						placeDisk(j,ourColor);
+						j++;
+					}
+				}
+			}
+				//checking for RIGHT direction--------------------
+				//checking for LEFT direction--------------------
+				if(i%8!=0){
+				j=i-1;
+				flipable=false;
+				while(buttons[j].getFont().getName().equals(oponentsColor) && j>=i-(i%8)){
+					j--;
+					if(buttons[j].getFont().getName().equals(ourColor)){
+						flipable=true;
+					}
+				}
+				j=i-1;
+				if(flipable){
+					while(buttons[j].getFont().getName().equals(oponentsColor)){
+						placeDisk(j,ourColor);
+						j--;
+					}
+				}
+			}
+				//checking for LEFT direction--------------------
+				//checking for UP direction--------------------
+				if(i>=8){
+				j=i-8;
+				flipable=false;
+				while(buttons[j].getFont().getName().equals(oponentsColor) && j>=8){
+					j-=8;
+					if(buttons[j].getFont().getName().equals(ourColor)){
+						flipable=true;
+					}
+				}
+				j=i-8;
+				if(flipable){
+					while(buttons[j].getFont().getName().equals(oponentsColor)){
+						placeDisk(j,ourColor);
+						j-=8;
+					}
+				}
+			}
+				//checking for UP direction--------------------
+				//checking for DOWN direction--------------------
+				if(i<=55){
+				j=i+8;
+				flipable=false;
+				while(buttons[j].getFont().getName().equals(oponentsColor) && j<=55){
+					j+=8;
+					if(buttons[j].getFont().getName().equals(ourColor)){
+						flipable=true;
+					}
+				}
+				j=i+8;
+				if(flipable){
+					while(buttons[j].getFont().getName().equals(oponentsColor)){
+						placeDisk(j,ourColor);
+						j+=8;
+					}
+				}
+			}
+				//checking for DOWN direction--------------------
+				//checking for LEFT UP DIAGONAL direction--------------------
+				if(i>=8 && i%8!=0){
+				j=i-9;
+				flipable=false;
+				while(buttons[j].getFont().getName().equals(oponentsColor) && j%8!=0 && j>=8){
+					j-=9;
+					if(buttons[j].getFont().getName().equals(ourColor)){
+						flipable=true;
+					}
+				}
+				j=i-9;
+				if(flipable){
+					while(buttons[j].getFont().getName().equals(oponentsColor)){
+						placeDisk(j,ourColor);
+						j-=9;
+					}
+				}
+			}
+				//checking for LEFT UP DIAGONAL direction--------------------
+				//checking for LEFT DOWN DIAGONAL direction--------------------
+				if(i<=55 && i%8!=0){
+				j=i+7;
+				flipable=false;
+				while(buttons[j].getFont().getName().equals(oponentsColor) && j%8!=0 && j<=55){
+					j+=7;
+					if(buttons[j].getFont().getName().equals(ourColor)){
+						flipable=true;
+					}
+				}
+				j=i+7;
+				if(flipable){
+					while(buttons[j].getFont().getName().equals(oponentsColor)){
+						placeDisk(j,ourColor);
+						j+=7;
+					}
+				}
+			}
+				//checking for LEFT DOWN DIAGONAL direction--------------------
+				//checking for RIGHT UP DIAGONAL direction--------------------
+				if((i+1)%8!=0 && i>=8){
+				j=i-7;
+				flipable=false;
+				while(buttons[j].getFont().getName().equals(oponentsColor) && j%8!=7 && j>=8){
+					j-=7;
+					if(buttons[j].getFont().getName().equals(ourColor)){
+						flipable=true;
+					}
+				}
+				j=i-7;
+				if(flipable){
+					while(buttons[j].getFont().getName().equals(oponentsColor)){
+						placeDisk(j,ourColor);
+						j-=7;
+					}
+				}
+			}
+				//checking for RIGHT UP DIAGONAL direction--------------------
+				//checking for RIGHT DOWN DIAGONAL direction--------------------
+				if((i+1)%8!=0 && i<=55){
+				j=i+9;
+				flipable=false;
+				while(buttons[j].getFont().getName().equals(oponentsColor) && j%8!=7 && j<=54){
+					j+=9;
+					if(buttons[j].getFont().getName().equals(ourColor)){
+						flipable=true;
+					}
+				}
+				j=i+9;
+				if(flipable){
+					while(buttons[j].getFont().getName().equals(oponentsColor)){
+						placeDisk(j,ourColor);
+						j+=9;
+					}
+				}
+			}
+				//checking for RIGHT DOWN DIAGONAL direction--------------------
+		}
+	
     }
 
 	//Genetrates current player's possible moves
@@ -486,23 +804,22 @@ public class ReversAI implements ActionListener{
 				if(isBlack) {
 					if(buttons[i].getFont().getName().equals("G")) {
 						placeDisk(i,"B");
+						flipDisks(i);
 						isBlack=false;
 						textfield.setText("White's turn");
-						flipDisks();
 					}
 				}
 				else {
 					if(buttons[i].getFont().getName().equals("G")) {
 						placeDisk(i,"W");
+						flipDisks(i);
 						isBlack=true;
 						textfield.setText("Black's turn");
-						flipDisks();
 					}
 				}
 			}			
 		}
 		possibleMoves();
-		System.out.println(grayCount);
 		if(isBlack && grayCount==0){
 			blackHasMoves=false;
 			isBlack=!isBlack;
