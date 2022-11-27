@@ -21,7 +21,7 @@ public class Move {
 
     Move(int value)
     {
-        this.pos = 1;
+        this.pos = -1;
         this.value = value;
     }
 
