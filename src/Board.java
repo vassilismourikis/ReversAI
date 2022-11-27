@@ -7,12 +7,12 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class Board {
-    boolean isBlack; // It's black's turn
-	public static boolean blackHasMoves, whiteHasMoves;
-	JButton[] buttons;
-	private static int grayCount;
+    private boolean isBlack; // It's black's turn
+	private boolean blackHasMoves, whiteHasMoves;
+	private int grayCount;
 	private boolean playerIsBlack;
 	private Move lastMove;
+	private JButton[] buttons;
 
 	public Move getLastMove(){
 		return this.lastMove;
@@ -54,14 +54,6 @@ public class Board {
 		this.whiteHasMoves=whiteHasMoves;
 	}
 
-	public JButton[] getButtons() {
-		return this.buttons;
-	}
-
-	public void setButtons(JButton[] buttons) {
-		this.buttons = buttons;
-	}
-
 	public boolean getPlayerIsBlack() {
 		return this.playerIsBlack;
 	}
@@ -77,14 +69,7 @@ public class Board {
         this.playerIsBlack=playerIsBlack;
         this.blackHasMoves=true;
         this.whiteHasMoves=true;
-        this.buttons= new JButton[64];
-		for(int i=0;i<64;i++) {
-			buttons[i] = new JButton();
-			ReversAI.button_panel.add(buttons[i]);
-			buttons[i].setFont(new Font("",Font.PLAIN,60)); //Fonts name helps to find out what disk(or not) is placed there
-			buttons[i].setFocusable(false);
-            buttons[i].setBackground(new Color(0,255,0));
-		}
+		this.buttons=new JButton[64];
     }
 
     public Board(Board board){
@@ -94,47 +79,34 @@ public class Board {
         this.playerIsBlack=board.getPlayerIsBlack();
         this.blackHasMoves=board.getBlackHasMoves();
         this.whiteHasMoves=board.getWhiteHasMoves();
-        this.buttons= board.getButtons();
+		this.buttons=new JButton[64];
+		for(int i=0;i<board.getButtons().length;i++){
+			this.buttons[i]=board.getButtons()[i];
+		}
     }
 
-    int evaluate()
+    public JButton[] getButtons() {
+        return this.buttons;
+    }
+
+    int evaluate()//TODO: MAYBE NEED THE END GAME TOO
     {
         int scoreB = 0;
         int scoreW = 0;
 
-        for(int i=0; i<buttons.length;i++){
-			if(buttons[i].getFont().getName().equals("B")){
+        for(int i=0; i<this.buttons.length;i++){
+			if(this.buttons[i].getFont().getName().equals("B")){
 				scoreB++;
 			}
 		}
 
-		for(int i=0; i<buttons.length;i++){
-			if(buttons[i].getFont().getName().equals("W")){
+		for(int i=0; i<this.buttons.length;i++){
+			if(this.buttons[i].getFont().getName().equals("W")){
 				scoreW++;
 			}
 		}
 
         return scoreB - scoreW;
-    }
-
-    /* Generates the children of the state
-     * Any square in the board that is empty results to a child
-     */
-    ArrayList<Board> getChildren(String color)
-    {
-        ArrayList<Board> children = new ArrayList<>();
-        for(int i = 0; i < 64; i++)
-        {
-			if(buttons[i].getFont().getName().equals("G")) {
-                    Board child = new Board(this);
-                    child.placeDisk(i,color);
-					child.flipDisks(i);
-					child.setIsBlack(!this.isBlack);
-					child.setLastMove(new Move(i,child.evaluate()));
-                    children.add(child);
-                }
-        }
-        return children;
     }
 
     //Flips disks after player's move
@@ -143,7 +115,7 @@ public class Board {
 		String ourColor="";
 		int j;
 		Boolean flipable=false;
-		if(isBlack){
+		if(this.isBlack){
 			ourColor="B";
 			oponentsColor="W";
 
@@ -151,16 +123,16 @@ public class Board {
 			if((i+1)%8!=0){
 				j=i+1;
 				flipable=false;
-				while(buttons[j].getFont().getName().equals(oponentsColor) && j<=i+8-(i%8+1)){
+				while(this.buttons[j].getFont().getName().equals(oponentsColor) && j<i+8-(i%8+1)){
 					j++;
-					if(buttons[j].getFont().getName().equals(ourColor)){
+					if(this.buttons[j].getFont().getName().equals(ourColor)){
 						flipable=true;
 					}
 				}
 				j=i+1;
 				if(flipable){
-					while(buttons[j].getFont().getName().equals(oponentsColor)){
-						placeDisk(j,ourColor);
+					while(this.buttons[j].getFont().getName().equals(oponentsColor)){
+						this.placeDisk(j,ourColor);
 						j++;
 					}
 				}
@@ -170,16 +142,16 @@ public class Board {
 				if(i%8!=0){
 				j=i-1;
 				flipable=false;
-				while(buttons[j].getFont().getName().equals(oponentsColor) && j>i-(i%8)){
+				while(this.buttons[j].getFont().getName().equals(oponentsColor) && j>i-(i%8)){
 					j--;
-					if(buttons[j].getFont().getName().equals(ourColor)){
+					if(this.buttons[j].getFont().getName().equals(ourColor)){
 						flipable=true;
 					}
 				}
 				j=i-1;
 				if(flipable){
-					while(buttons[j].getFont().getName().equals(oponentsColor)){
-						placeDisk(j,ourColor);
+					while(this.buttons[j].getFont().getName().equals(oponentsColor)){
+						this.placeDisk(j,ourColor);
 						j--;
 					}
 				}
@@ -189,16 +161,16 @@ public class Board {
 				if(i>=8){
 				j=i-8;
 				flipable=false;
-				while(buttons[j].getFont().getName().equals(oponentsColor) && j>=8){
+				while(this.buttons[j].getFont().getName().equals(oponentsColor) && j>=8){
 					j-=8;
-					if(buttons[j].getFont().getName().equals(ourColor)){
+					if(this.buttons[j].getFont().getName().equals(ourColor)){
 						flipable=true;
 					}
 				}
 				j=i-8;
 				if(flipable){
-					while(buttons[j].getFont().getName().equals(oponentsColor)){
-						placeDisk(j,ourColor);
+					while(this.buttons[j].getFont().getName().equals(oponentsColor)){
+						this.placeDisk(j,ourColor);
 						j-=8;
 					}
 				}
@@ -208,16 +180,16 @@ public class Board {
 				if(i<=55){
 				j=i+8;
 				flipable=false;
-				while(buttons[j].getFont().getName().equals(oponentsColor) && j<=55){
+				while(this.buttons[j].getFont().getName().equals(oponentsColor) && j<=55){
 					j+=8;
-					if(buttons[j].getFont().getName().equals(ourColor)){
+					if(this.buttons[j].getFont().getName().equals(ourColor)){
 						flipable=true;
 					}
 				}
 				j=i+8;
 				if(flipable){
-					while(buttons[j].getFont().getName().equals(oponentsColor)){
-						placeDisk(j,ourColor);
+					while(this.buttons[j].getFont().getName().equals(oponentsColor)){
+						this.placeDisk(j,ourColor);
 						j+=8;
 					}
 				}
@@ -227,16 +199,16 @@ public class Board {
 				if(i>=8 && i%8!=0){
 				j=i-9;
 				flipable=false;
-				while(buttons[j].getFont().getName().equals(oponentsColor) && j%8!=0 && j>=8){
+				while(this.buttons[j].getFont().getName().equals(oponentsColor) && j%8!=0 && j>=8){
 					j-=9;
-					if(buttons[j].getFont().getName().equals(ourColor)){
+					if(this.buttons[j].getFont().getName().equals(ourColor)){
 						flipable=true;
 					}
 				}
 				j=i-9;
 				if(flipable){
-					while(buttons[j].getFont().getName().equals(oponentsColor)){
-						placeDisk(j,ourColor);
+					while(this.buttons[j].getFont().getName().equals(oponentsColor)){
+						this.placeDisk(j,ourColor);
 						j-=9;
 					}
 				}
@@ -246,16 +218,16 @@ public class Board {
 				if(i<=55 && i%8!=0){
 				j=i+7;
 				flipable=false;
-				while(buttons[j].getFont().getName().equals(oponentsColor) && j%8!=0 && j<=55){
+				while(this.buttons[j].getFont().getName().equals(oponentsColor) && j%8!=0 && j<=55){
 					j+=7;
-					if(buttons[j].getFont().getName().equals(ourColor)){
+					if(this.buttons[j].getFont().getName().equals(ourColor)){
 						flipable=true;
 					}
 				}
 				j=i+7;
 				if(flipable){
-					while(buttons[j].getFont().getName().equals(oponentsColor)){
-						placeDisk(j,ourColor);
+					while(this.buttons[j].getFont().getName().equals(oponentsColor)){
+						this.placeDisk(j,ourColor);
 						j+=7;
 					}
 				}
@@ -265,16 +237,16 @@ public class Board {
 				if((i+1)%8!=0 && i>=8){
 				j=i-7;
 				flipable=false;
-				while(buttons[j].getFont().getName().equals(oponentsColor) && j%8!=7 && j>=8){
+				while(this.buttons[j].getFont().getName().equals(oponentsColor) && j%8!=7 && j>=8){
 					j-=7;
-					if(buttons[j].getFont().getName().equals(ourColor)){
+					if(this.buttons[j].getFont().getName().equals(ourColor)){
 						flipable=true;
 					}
 				}
 				j=i-7;
 				if(flipable){
-					while(buttons[j].getFont().getName().equals(oponentsColor)){
-						placeDisk(j,ourColor);
+					while(this.buttons[j].getFont().getName().equals(oponentsColor)){
+						this.placeDisk(j,ourColor);
 						j-=7;
 					}
 				}
@@ -284,16 +256,16 @@ public class Board {
 				if((i+1)%8!=0 && i<=55){
 				j=i+9;
 				flipable=false;
-				while(buttons[j].getFont().getName().equals(oponentsColor) && j%8!=7 && j<=54){
+				while(this.buttons[j].getFont().getName().equals(oponentsColor) && j%8!=7 && j<=54){
 					j+=9;
-					if(buttons[j].getFont().getName().equals(ourColor)){
+					if(this.buttons[j].getFont().getName().equals(ourColor)){
 						flipable=true;
 					}
 				}
 				j=i+9;
 				if(flipable){
-					while(buttons[j].getFont().getName().equals(oponentsColor)){
-						placeDisk(j,ourColor);
+					while(this.buttons[j].getFont().getName().equals(oponentsColor)){
+						this.placeDisk(j,ourColor);
 						j+=9;
 					}
 				}
@@ -307,16 +279,16 @@ public class Board {
 			if((i+1)%8!=0){
 				j=i+1;
 				flipable=false;
-				while(buttons[j].getFont().getName().equals(oponentsColor) && j<=i+8-(i%8+1)){
+				while(this.buttons[j].getFont().getName().equals(oponentsColor) && j<=i+8-(i%8+1)){
 					j++;
-					if(buttons[j].getFont().getName().equals(ourColor)){
+					if(this.buttons[j].getFont().getName().equals(ourColor)){
 						flipable=true;
 					}
 				}
 				j=i+1;
 				if(flipable){
-					while(buttons[j].getFont().getName().equals(oponentsColor)){
-						placeDisk(j,ourColor);
+					while(this.buttons[j].getFont().getName().equals(oponentsColor)){
+						this.placeDisk(j,ourColor);
 						j++;
 					}
 				}
@@ -326,16 +298,16 @@ public class Board {
 				if(i%8!=0){
 				j=i-1;
 				flipable=false;
-				while(buttons[j].getFont().getName().equals(oponentsColor) && j>i-(i%8)){
+				while(this.buttons[j].getFont().getName().equals(oponentsColor) && j>i-(i%8)){
 					j--;
-					if(buttons[j].getFont().getName().equals(ourColor)){
+					if(this.buttons[j].getFont().getName().equals(ourColor)){
 						flipable=true;
 					}
 				}
 				j=i-1;
 				if(flipable){
-					while(buttons[j].getFont().getName().equals(oponentsColor)){
-						placeDisk(j,ourColor);
+					while(this.buttons[j].getFont().getName().equals(oponentsColor)){
+						this.placeDisk(j,ourColor);
 						j--;
 					}
 				}
@@ -345,16 +317,16 @@ public class Board {
 				if(i>=8){
 				j=i-8;
 				flipable=false;
-				while(buttons[j].getFont().getName().equals(oponentsColor) && j>=8){
+				while(this.buttons[j].getFont().getName().equals(oponentsColor) && j>=8){
 					j-=8;
-					if(buttons[j].getFont().getName().equals(ourColor)){
+					if(this.buttons[j].getFont().getName().equals(ourColor)){
 						flipable=true;
 					}
 				}
 				j=i-8;
 				if(flipable){
-					while(buttons[j].getFont().getName().equals(oponentsColor)){
-						placeDisk(j,ourColor);
+					while(this.buttons[j].getFont().getName().equals(oponentsColor)){
+						this.placeDisk(j,ourColor);
 						j-=8;
 					}
 				}
@@ -364,16 +336,16 @@ public class Board {
 				if(i<=55){
 				j=i+8;
 				flipable=false;
-				while(buttons[j].getFont().getName().equals(oponentsColor) && j<=55){
+				while(this.buttons[j].getFont().getName().equals(oponentsColor) && j<=55){
 					j+=8;
-					if(buttons[j].getFont().getName().equals(ourColor)){
+					if(this.buttons[j].getFont().getName().equals(ourColor)){
 						flipable=true;
 					}
 				}
 				j=i+8;
 				if(flipable){
-					while(buttons[j].getFont().getName().equals(oponentsColor)){
-						placeDisk(j,ourColor);
+					while(this.buttons[j].getFont().getName().equals(oponentsColor)){
+						this.placeDisk(j,ourColor);
 						j+=8;
 					}
 				}
@@ -383,16 +355,16 @@ public class Board {
 				if(i>=8 && i%8!=0){
 				j=i-9;
 				flipable=false;
-				while(buttons[j].getFont().getName().equals(oponentsColor) && j%8!=0 && j>=8){
+				while(this.buttons[j].getFont().getName().equals(oponentsColor) && j%8!=0 && j>=8){
 					j-=9;
-					if(buttons[j].getFont().getName().equals(ourColor)){
+					if(this.buttons[j].getFont().getName().equals(ourColor)){
 						flipable=true;
 					}
 				}
 				j=i-9;
 				if(flipable){
-					while(buttons[j].getFont().getName().equals(oponentsColor)){
-						placeDisk(j,ourColor);
+					while(this.buttons[j].getFont().getName().equals(oponentsColor)){
+						this.placeDisk(j,ourColor);
 						j-=9;
 					}
 				}
@@ -402,16 +374,16 @@ public class Board {
 				if(i<=55 && i%8!=0){
 				j=i+7;
 				flipable=false;
-				while(buttons[j].getFont().getName().equals(oponentsColor) && j%8!=0 && j<=55){
+				while(this.buttons[j].getFont().getName().equals(oponentsColor) && j%8!=0 && j<=55){
 					j+=7;
-					if(buttons[j].getFont().getName().equals(ourColor)){
+					if(this.buttons[j].getFont().getName().equals(ourColor)){
 						flipable=true;
 					}
 				}
 				j=i+7;
 				if(flipable){
-					while(buttons[j].getFont().getName().equals(oponentsColor)){
-						placeDisk(j,ourColor);
+					while(this.buttons[j].getFont().getName().equals(oponentsColor)){
+						this.placeDisk(j,ourColor);
 						j+=7;
 					}
 				}
@@ -421,16 +393,16 @@ public class Board {
 				if((i+1)%8!=0 && i>=8){
 				j=i-7;
 				flipable=false;
-				while(buttons[j].getFont().getName().equals(oponentsColor) && j%8!=7 && j>=8){
+				while(this.buttons[j].getFont().getName().equals(oponentsColor) && j%8!=7 && j>=8){
 					j-=7;
-					if(buttons[j].getFont().getName().equals(ourColor)){
+					if(this.buttons[j].getFont().getName().equals(ourColor)){
 						flipable=true;
 					}
 				}
 				j=i-7;
 				if(flipable){
-					while(buttons[j].getFont().getName().equals(oponentsColor)){
-						placeDisk(j,ourColor);
+					while(this.buttons[j].getFont().getName().equals(oponentsColor)){
+						this.placeDisk(j,ourColor);
 						j-=7;
 					}
 				}
@@ -440,16 +412,16 @@ public class Board {
 				if((i+1)%8!=0 && i<=55){
 				j=i+9;
 				flipable=false;
-				while(buttons[j].getFont().getName().equals(oponentsColor) && j%8!=7 && j<=54){
+				while(this.buttons[j].getFont().getName().equals(oponentsColor) && j%8!=7 && j<=54){
 					j+=9;
-					if(buttons[j].getFont().getName().equals(ourColor)){
+					if(this.buttons[j].getFont().getName().equals(ourColor)){
 						flipable=true;
 					}
 				}
 				j=i+9;
 				if(flipable){
-					while(buttons[j].getFont().getName().equals(oponentsColor)){
-						placeDisk(j,ourColor);
+					while(this.buttons[j].getFont().getName().equals(oponentsColor)){
+						this.placeDisk(j,ourColor);
 						j+=9;
 					}
 				}
@@ -463,27 +435,27 @@ public class Board {
 	public void possibleMoves(){
 		//First removes previous player's possible moves
 		for(int i=0;i<64;i++) {
-			if(buttons[i].getFont().getName().equals("G")) {
-				placeDisk(i,"");
+			if(this.buttons[i].getFont().getName().equals("G")) {
+				this.placeDisk(i,"");
 			}
 		}
-		grayCount=0;
+		this.grayCount=0;
 
 		//Then puts gray to the current player's possible moves (in case its player's turn and not ai's)
 		
 			for(int i=0;i<64;i++) {
-				if(isBlack){ //means black is playing
-					if(buttons[i].getFont().getName().equals("B")){
+				if(this.isBlack){ //means black is playing
+					if(this.buttons[i].getFont().getName().equals("B")){
 						//checking for RIGHT direction--------------------
 						int j;
 						JButton b;
 						if(i!=63){
 							j=1;
-							b=buttons[i+j];
+							b=this.buttons[i+j];
 							while(b.getFont().getName().equals("W") && j<=8-(i%8+2)){
 								j++;
 								try{
-									b=buttons[i+j];
+									b=this.buttons[i+j];
 								}
 								catch(ArrayIndexOutOfBoundsException ex){
 									System.out.println("OUT OF BOUNTS: "+ i+j);
@@ -492,18 +464,18 @@ public class Board {
 								
 							}
 							if(b.getFont().getName().equals("") && j!=1){
-								placeDisk(i+j, "G");
+								this.placeDisk(i+j, "G");
 							}
 						}
 						//checking for RIGHT direction--------------------
 						//checking for LEFT direction--------------------
 						if(i!=0){
 							j=-1;
-							b=buttons[i+j];
+							b=this.buttons[i+j];
 							while(b.getFont().getName().equals("W") && j>=(i%8)*(-1)+1){
 								j--;
 								try{
-									b=buttons[i+j];
+									b=this.buttons[i+j];
 								}
 								catch(ArrayIndexOutOfBoundsException ex){
 									System.out.println("OUT OF BOUNTS: "+ i+j);
@@ -512,18 +484,18 @@ public class Board {
 								
 							}
 							if(b.getFont().getName().equals("") && j!=-1){
-								placeDisk(i+j, "G");
+								this.placeDisk(i+j, "G");
 							}
 						}
 						//checking for LEFT direction--------------------
 						//checking for UP direction--------------------
 						if(i-8>=0){
 							j=-8;
-							b=buttons[i+j];
+							b=this.buttons[i+j];
 							while(b.getFont().getName().equals("W") && i+j-8>=0){
 								j-=8;
 								try{
-									b=buttons[i+j];
+									b=this.buttons[i+j];
 								}
 								catch(ArrayIndexOutOfBoundsException ex){
 									System.out.println("OUT OF BOUNTS: "+ i+j);
@@ -532,18 +504,18 @@ public class Board {
 									
 							}
 							if(b.getFont().getName().equals("") && j!=-8){
-								placeDisk(i+j, "G");
+								this.placeDisk(i+j, "G");
 							}
 						}
 						//checking for UP direction--------------------
 						//checking for DOWN direction--------------------
 						if(i+8<=63){
 							j=8;
-							b=buttons[i+j];
+							b=this.buttons[i+j];
 							while(b.getFont().getName().equals("W") && i+j+8<=63){
 								j+=8;
 								try{
-									b=buttons[i+j];
+									b=this.buttons[i+j];
 								}
 								catch(ArrayIndexOutOfBoundsException ex){
 									System.out.println("OUT OF BOUNTS: "+ i+j);
@@ -552,18 +524,18 @@ public class Board {
 									
 							}
 							if(b.getFont().getName().equals("") && j!=8){
-								placeDisk(i+j, "G");
+								this.placeDisk(i+j, "G");
 							}
 						}
 						//checking for DOWN direction--------------------
 						//checking for UP LEFT DIAGONAL direction--------------------
 						if(i%8!=0 && i>8){ // In this case it has no up left for sure
 							j=-9;
-							b=buttons[i+j];
+							b=this.buttons[i+j];
 							while(b.getFont().getName().equals("W") && (i+j)%8!=0 && i+j>=8){
 								j-=9;
 								try{
-									b=buttons[i+j];
+									b=this.buttons[i+j];
 								}
 								catch(ArrayIndexOutOfBoundsException ex){
 									System.out.println("OUT OF BOUNTS: "+ i+j);
@@ -572,18 +544,18 @@ public class Board {
 									
 							}
 							if(b.getFont().getName().equals("") && j!=-9){
-								placeDisk(i+j, "G");
+								this.placeDisk(i+j, "G");
 							}
 						}
 						//checking for UP LEFT DIAGONAL direction--------------------
 						//checking for UP RIGHT DIAGONAL direction--------------------
 						if(i%8!=7 && i>8){ // In this case it has no up right for sure
 							j=-7;
-							b=buttons[i+j];
+							b=this.buttons[i+j];
 							while(b.getFont().getName().equals("W") && (i+j)%8!=7 && i+j>=8){
 								j-=7;
 								try{
-									b=buttons[i+j];
+									b=this.buttons[i+j];
 								}
 								catch(ArrayIndexOutOfBoundsException ex){
 									System.out.println("OUT OF BOUNTS: "+ i+j);
@@ -592,18 +564,18 @@ public class Board {
 									
 							}
 							if(b.getFont().getName().equals("") && j!=-7){
-								placeDisk(i+j, "G");
+								this.placeDisk(i+j, "G");
 							}
 						}
 						//checking for UP RIGHT DIAGONAL direction--------------------
 						//checking for DOWN RIGHT DIAGONAL direction--------------------
 						if(i<=54 && i%8!=7){ // In this case it has no  for sure
 							j=9;
-							b=buttons[i+j];
+							b=this.buttons[i+j];
 							while(b.getFont().getName().equals("W") && (i+j)<=54 && (i+j)%8!=7){
 								j+=9;
 								try{
-									b=buttons[i+j];
+									b=this.buttons[i+j];
 								}
 								catch(ArrayIndexOutOfBoundsException ex){
 									System.out.println("OUT OF BOUNTS: "+ i+j);
@@ -612,18 +584,18 @@ public class Board {
 									
 							}
 							if(b.getFont().getName().equals("") && j!=9){
-								placeDisk(i+j, "G");
+								this.placeDisk(i+j, "G");
 							}
 						}
 						//checking for DOWN RIGHT DIAGONAL direction--------------------
 						//checking for DOWN LEFT DIAGONAL direction--------------------
 						if(i%8!=0 && i<=54){ // In this case it has no  for sure
 							j=7;
-							b=buttons[i+j];
+							b=this.buttons[i+j];
 							while(b.getFont().getName().equals("W") && (i+j)%8!=0 && i+j>=8 && i+j<=54){
 								j+=7;
 								try{
-									b=buttons[i+j];
+									b=this.buttons[i+j];
 								}
 								catch(ArrayIndexOutOfBoundsException ex){
 									System.out.println("OUT OF BOUNTS: "+ i+j);
@@ -632,24 +604,24 @@ public class Board {
 									
 							}
 							if(b.getFont().getName().equals("") && j!=7){
-								placeDisk(i+j, "G");
+								this.placeDisk(i+j, "G");
 							}
 						}
 						//checking for DOWN LEFT DIAGONAL direction--------------------
 					}
 				}
 				else {//means white is playing
-					if(buttons[i].getFont().getName().equals("W")){
+					if(this.buttons[i].getFont().getName().equals("W")){
 						//checking for RIGHT direction--------------------
 						int j;
 						JButton b;
 						if(i!=63){
 							j=1;
-							b=buttons[i+j];
+							b=this.buttons[i+j];
 							while(b.getFont().getName().equals("B") && j<=8-(i%8+2)){
 								j++;
 								try{
-									b=buttons[i+j];
+									b=this.buttons[i+j];
 								}
 								catch(ArrayIndexOutOfBoundsException ex){
 									System.out.println("OUT OF BOUNTS: "+ i+j);
@@ -658,18 +630,18 @@ public class Board {
 								
 							}
 							if(b.getFont().getName().equals("") && j!=1){
-								placeDisk(i+j, "G");
+								this.placeDisk(i+j, "G");
 							}
 						}
 						//checking for RIGHT direction--------------------
 						//checking for LEFT direction--------------------
 						if(i!=0){
 							j=-1;
-							b=buttons[i+j];
+							b=this.buttons[i+j];
 							while(b.getFont().getName().equals("B") && j>=(i%8)*(-1)+1){
 								j--;
 								try{
-									b=buttons[i+j];
+									b=this.buttons[i+j];
 								}
 								catch(ArrayIndexOutOfBoundsException ex){
 									System.out.println("OUT OF BOUNTS: "+ i+j);
@@ -678,18 +650,18 @@ public class Board {
 								
 							}
 							if(b.getFont().getName().equals("") && j!=-1){
-								placeDisk(i+j, "G");
+								this.placeDisk(i+j, "G");
 							}
 						}
 						//checking for LEFT direction--------------------
 						//checking for UP direction--------------------
 						if(i-8>=0){
 							j=-8;
-							b=buttons[i+j];
+							b=this.buttons[i+j];
 							while(b.getFont().getName().equals("B") && i+j-8>=0){
 								j-=8;
 								try{
-									b=buttons[i+j];
+									b=this.buttons[i+j];
 								}
 								catch(ArrayIndexOutOfBoundsException ex){
 									System.out.println("OUT OF BOUNTS: "+ i+j);
@@ -698,18 +670,18 @@ public class Board {
 									
 							}
 							if(b.getFont().getName().equals("") && j!=-8){
-								placeDisk(i+j, "G");
+								this.placeDisk(i+j, "G");
 							}
 						}
 						//checking for UP direction--------------------
 						//checking for DOWN direction--------------------
 						if(i+8<=63){
 							j=8;
-							b=buttons[i+j];
+							b=this.buttons[i+j];
 							while(b.getFont().getName().equals("B") && i+j+8<=63){
 								j+=8;
 								try{
-									b=buttons[i+j];
+									b=this.buttons[i+j];
 								}
 								catch(ArrayIndexOutOfBoundsException ex){
 									System.out.println("OUT OF BOUNTS: "+ i+j);
@@ -718,18 +690,18 @@ public class Board {
 									
 							}
 							if(b.getFont().getName().equals("") && j!=8){
-								placeDisk(i+j, "G");
+								this.placeDisk(i+j, "G");
 							}
 						}
 						//checking for DOWN direction--------------------
 						//checking for UP LEFT DIAGONAL direction--------------------
 						if(i%8!=0 && i>8){ // In this case it has no up left for sure
 							j=-9;
-							b=buttons[i+j];
+							b=this.buttons[i+j];
 							while(b.getFont().getName().equals("B") && (i+j)%8!=0 && i+j>=8){
 								j-=9;
 								try{
-									b=buttons[i+j];
+									b=this.buttons[i+j];
 								}
 								catch(ArrayIndexOutOfBoundsException ex){
 									System.out.println("OUT OF BOUNTS: "+ i+j);
@@ -738,18 +710,18 @@ public class Board {
 									
 							}
 							if(b.getFont().getName().equals("") && j!=-9){
-								placeDisk(i+j, "G");
+								this.placeDisk(i+j, "G");
 							}
 						}
 						//checking for UP LEFT DIAGONAL direction--------------------
 						//checking for UP RIGHT DIAGONAL direction--------------------
 						if(i%8!=7 && i>8){ // In this case it has no up right for sure
 							j=-7;
-							b=buttons[i+j];
+							b=this.buttons[i+j];
 							while(b.getFont().getName().equals("B") && (i+j)%8!=7 && i+j>=8){
 								j-=7;
 								try{
-									b=buttons[i+j];
+									b=this.buttons[i+j];
 								}
 								catch(ArrayIndexOutOfBoundsException ex){
 									System.out.println("OUT OF BOUNTS: "+ i+j);
@@ -758,18 +730,18 @@ public class Board {
 									
 							}
 							if(b.getFont().getName().equals("") && j!=-7){
-								placeDisk(i+j, "G");
+								this.placeDisk(i+j, "G");
 							}
 						}
 						//checking for UP RIGHT DIAGONAL direction--------------------
 						//checking for DOWN RIGHT DIAGONAL direction--------------------
 						if(i<=54 && i%8!=7){ // In this case it has no  for sure
 							j=9;
-							b=buttons[i+j];
+							b=this.buttons[i+j];
 							while(b.getFont().getName().equals("B") && (i+j)<=54 && (i+j)%8!=7){
 								j+=9;
 								try{
-									b=buttons[i+j];
+									b=this.buttons[i+j];
 								}
 								catch(ArrayIndexOutOfBoundsException ex){
 									System.out.println("OUT OF BOUNTS: "+ i+j);
@@ -778,18 +750,18 @@ public class Board {
 									
 							}
 							if(b.getFont().getName().equals("") && j!=9){
-								placeDisk(i+j, "G");
+								this.placeDisk(i+j, "G");
 							}
 						}
 						//checking for DOWN RIGHT DIAGONAL direction--------------------
 						//checking for DOWN LEFT DIAGONAL direction--------------------
 						if(i%8!=0 && i<=54){ // In this case it has no  for sure
 							j=7;
-							b=buttons[i+j];
+							b=this.buttons[i+j];
 							while(b.getFont().getName().equals("B") && (i+j)%8!=0 && i+j>=8 && i+j<=54){
 								j+=7;
 								try{
-									b=buttons[i+j];
+									b=this.buttons[i+j];
 								}
 								catch(ArrayIndexOutOfBoundsException ex){
 									System.out.println("OUT OF BOUNTS: "+ i+j);
@@ -798,7 +770,7 @@ public class Board {
 									
 							}
 							if(b.getFont().getName().equals("") && j!=7){
-								placeDisk(i+j, "G");
+								this.placeDisk(i+j, "G");
 							}
 						}
 						//checking for DOWN LEFT DIAGONAL direction--------------------
@@ -819,9 +791,9 @@ public class Board {
 	public void endGame(){
 		int black_disks=0,white_disks=0;
 		for(int i=0;i<64;i++) {
-			if(buttons[i].getFont().getName().equals("B")) {
+			if(this.buttons[i].getFont().getName().equals("B")) {
 				black_disks++;
-			}else if(buttons[i].getFont().getName().equals("W")){
+			}else if(this.buttons[i].getFont().getName().equals("W")){
 				white_disks++;
 			}
 		}
@@ -834,13 +806,13 @@ public class Board {
 		}
 	}
 
-	//Places (or removes) disk. You need to give i for buttons possition ang "B"/"W"/"G"/"" for color ("" for removing disk in case of possible moves generation)
+	//Places (or removes) disk. You need to give i for this.buttons possition ang "B"/"W"/"G"/"" for color ("" for removing disk in case of possible moves generation)
 	public void placeDisk(int i,String color){
 		if(color.equals("B")){
 			try {
 				Image img = ImageIO.read(new FileInputStream(new File("Assets\\black_disk.png")));
-				buttons[i].setIcon(new ImageIcon(img));
-				buttons[i].setFont(new Font("B",Font.PLAIN,75));
+				this.buttons[i].setIcon(new ImageIcon(img));
+				this.buttons[i].setFont(new Font("B",Font.PLAIN,75));
 			}catch(Exception ex){
 				System.out.println("Asset NOT FOUND");
 			}
@@ -848,8 +820,8 @@ public class Board {
 		else if(color.equals("W")){
 			try {
 				Image img = ImageIO.read(new FileInputStream(new File("Assets\\white_disk.png")));
-				buttons[i].setIcon(new ImageIcon(img));
-				buttons[i].setFont(new Font("W",Font.PLAIN,75));
+				this.buttons[i].setIcon(new ImageIcon(img));
+				this.buttons[i].setFont(new Font("W",Font.PLAIN,75));
 			}catch(Exception ex){
 				System.out.println("Asset NOT FOUND");
 			}
@@ -857,16 +829,16 @@ public class Board {
 		else if(color.equals("G")){
 			try {
 				Image img = ImageIO.read(new FileInputStream(new File("Assets\\gray_disk.png")));
-				buttons[i].setIcon(new ImageIcon(img));
-				buttons[i].setFont(new Font("G",Font.PLAIN,75));
-				grayCount++;
+				this.buttons[i].setIcon(new ImageIcon(img));
+				this.buttons[i].setFont(new Font("G",Font.PLAIN,75));
+				this.grayCount++;
 			}catch(Exception ex){
 				System.out.println("Asset NOT FOUND");
 			}
 		}
 		else{
-			buttons[i].setIcon(null);
-			buttons[i].setFont(new Font("",Font.PLAIN,60));
+			this.buttons[i].setIcon(null);
+			this.buttons[i].setFont(new Font("",Font.PLAIN,60));
 		}
 	}
 }

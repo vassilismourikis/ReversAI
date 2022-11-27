@@ -23,6 +23,27 @@ public class Minimax{
         }
     }
 
+    /* Generates the children of the state
+     * Any square in the board that is empty results to a child
+     */
+    ArrayList<Board> getChildren(String color,Board board)
+    {
+        ArrayList<Board> children = new ArrayList<>();
+        for(int i = 0; i < 64; i++)
+        {
+			if(board.getButtons()[i].getFont().getName().equals("G")) {
+                    Board child = new Board(board);
+                    child.placeDisk(i,color);
+					child.flipDisks(i);
+					child.setIsBlack(!board.getIsBlack());
+					child.setLastMove(new Move(i,true));
+					child.possibleMoves();
+                    children.add(child);
+                }
+        }
+        return children;
+    }
+
     // The max and min functions are called one after another until a max depth is reached or tic-tac-toe.
     // We create a tree using backtracking DFS.
     Move max(Board board, int depth)
@@ -36,7 +57,7 @@ public class Minimax{
             return new Move(board.getLastMove().getPos(), board.evaluate());
         }
         //The children-moves of the state are calculated
-        ArrayList<Board> children = board.getChildren("B");
+        ArrayList<Board> children = getChildren("B",board);
         Move maxMove = new Move(Integer.MIN_VALUE); // put max node initially to smallest value.
         for(Board child: children)
         {
@@ -72,7 +93,7 @@ public class Minimax{
         {
             return new Move(board.getLastMove().getPos(), board.evaluate());
         }
-        ArrayList<Board> children = board.getChildren("W");
+        ArrayList<Board> children = getChildren("W",board);
         Move minMove = new Move(Integer.MAX_VALUE);
         for(Board child: children)
         {

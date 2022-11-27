@@ -9,17 +9,21 @@ public class ReversAI implements ActionListener{
 	JPanel title_panel = new JPanel();
 	public static JPanel button_panel = new JPanel();
 	public static JLabel textfield = new JLabel();
-	boolean isBlack=true; //It's black's turn
 	private Board board;
 	private int minimaxDepth;
 	private Minimax miniMax;
-	private JButton[] buttons;
+	private boolean AIplay;
 
 	ReversAI(boolean playerstarts, int minimaxDepth){
-		this.board= new Board(playerstarts);
 		this.minimaxDepth=minimaxDepth;
-		this.miniMax=new Minimax(minimaxDepth);
-		System.out.println("Player is black: "+board.getPlayerIsBlack() + "\nDepth: " + minimaxDepth);
+		if(minimaxDepth==-1){
+			AIplay=false;
+		}else{
+			AIplay=true;
+			this.miniMax=new Minimax(minimaxDepth);
+		}
+		this.board= new Board(playerstarts);
+		System.out.println("Player is black: "+board.getPlayerIsBlack() + "\nDepth: " + minimaxDepth + " AI plays: " +AIplay);
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(800,800);
@@ -38,6 +42,14 @@ public class ReversAI implements ActionListener{
 		title_panel.setBounds(0,0,800,100);
 		
 		button_panel.setLayout(new GridLayout(8,8));
+
+		for(int i=0;i<64;i++) {
+			board.getButtons()[i] = new JButton();
+			ReversAI.button_panel.add(board.getButtons()[i]);
+			board.getButtons()[i].setFont(new Font("",Font.PLAIN,60)); //Fonts name helps to find out what disk(or not) is placed there
+			board.getButtons()[i].setFocusable(false);
+            board.getButtons()[i].setBackground(new Color(0,255,0));
+		}
 		
 		title_panel.add(textfield);
 		frame.add(title_panel,BorderLayout.NORTH);
@@ -47,21 +59,22 @@ public class ReversAI implements ActionListener{
 		board.placeDisk(28, "B");
 		board.placeDisk(35, "B");
 		board.placeDisk(36, "W");
-		buttons=board.getButtons();
 		for(int i=0;i<64;i++) {
-			buttons[i].addActionListener(this);
+			board.getButtons()[i].addActionListener(this);
 		}
 
 		board.possibleMoves();
+		if(AIplay){
 		if(!board.getPlayerIsBlack()){
 			int miniMaxValue=miniMax.nextBestMove(board, "B").getPos();
 			board.placeDisk(miniMaxValue,"B");
 			board.flipDisks(miniMaxValue);
-			isBlack=false;
+			board.setIsBlack(false);
 			textfield.setText("White's turn");
-			board.setLastMove(new Move(miniMaxValue,board.evaluate()));
-			buttons=board.getButtons();
+			board.setLastMove(new Move(miniMaxValue,true));
+			board.possibleMoves();
 		}
+	}
 	}
 
 	
@@ -71,55 +84,47 @@ public class ReversAI implements ActionListener{
 		int miniMaxValue;
 		for(int i=0;i<64;i++) {
 			if(e.getSource()==board.getButtons()[i]) {
-				if(board.getPlayerIsBlack()){
-					
+				if(board.getIsBlack()){
 						if(board.getButtons()[i].getFont().getName().equals("G")) {
 							board.placeDisk(i,"B");
 							board.flipDisks(i);
-							isBlack=false;
+							board.setIsBlack(false);
 							textfield.setText("White's turn");
-							board.setLastMove(new Move(i,board.evaluate()));
-							buttons=board.getButtons();
-					
-					
-							miniMaxValue=miniMax.nextBestMove(board, "W").getPos();
-							board.placeDisk(miniMaxValue,"W");
-							board.flipDisks(miniMaxValue);
-							isBlack=true;
-							textfield.setText("Black's turn");
-							board.setLastMove(new Move(miniMaxValue,board.evaluate()));
-							buttons=board.getButtons();
+							board.setLastMove(new Move(i,true));
+							board.possibleMoves();
 						}
-					
 				}else{
-					
 					if(board.getButtons()[i].getFont().getName().equals("G")) {
 						board.placeDisk(i,"W");
 						board.flipDisks(i);
-						isBlack=true;
+						board.setIsBlack(true);
 						textfield.setText("Black's turn");
-						board.setLastMove(new Move(i,board.evaluate()));
-						buttons=board.getButtons();
-					
-						miniMaxValue=miniMax.nextBestMove(board, "B").getPos();
-						board.placeDisk(miniMaxValue,"B");
-						board.flipDisks(miniMaxValue);
-						isBlack=false;
-						textfield.setText("White's turn");
-						board.setLastMove(new Move(miniMaxValue,board.evaluate()));
-						buttons=board.getButtons();
-						
-					}
-						
+						board.setLastMove(new Move(i,true));
+						board.possibleMoves();				
 					}
 				}
-				
-			}			
-
-		board.possibleMoves();
-		if(isBlack && board.getGrayCount()==0){
+			}
+		}
+			if(AIplay){
+				if(board.getPlayerIsBlack()){
+					miniMaxValue=miniMax.nextBestMove(board, "W").getPos();
+					board.placeDisk(miniMaxValue,"W");
+					board.flipDisks(miniMaxValue);
+					board.setIsBlack(true);
+					textfield.setText("Black's turn");
+					board.setLastMove(new Move(miniMaxValue,true));
+				}else{
+					miniMaxValue=miniMax.nextBestMove(board, "B").getPos();
+					board.placeDisk(miniMaxValue,"B");
+					board.flipDisks(miniMaxValue);
+					board.setIsBlack(false);
+					textfield.setText("White's turn");
+					board.setLastMove(new Move(miniMaxValue,true));
+				}
+			}	
+		if(board.getIsBlack() && board.getGrayCount()==0){
 			board.setBlackHasMoves(false);
-			isBlack=!isBlack;
+			board.setIsBlack(!board.getIsBlack());
 			textfield.setText("White's turn");
 			board.possibleMoves();
 			if(board.getGrayCount()!=0){
@@ -128,9 +133,9 @@ public class ReversAI implements ActionListener{
 				board.setWhiteHasMoves(false);
 				board.checkGame();
 			} 
-		}else if(!isBlack && board.getGrayCount()==0){
+		}else if(!board.getIsBlack() && board.getGrayCount()==0){
 			board.setWhiteHasMoves(false);
-			isBlack=!isBlack;
+			board.setIsBlack(!board.getIsBlack());
 			textfield.setText("Black's turn");
 			board.possibleMoves();
 			if(board.getGrayCount()!=0){
@@ -139,9 +144,9 @@ public class ReversAI implements ActionListener{
 				board.setBlackHasMoves(false);
 				board.checkGame();
 			}
-		}else if(isBlack && board.getGrayCount()!=0){
+		}else if(board.getIsBlack() && board.getGrayCount()!=0){
 			board.setBlackHasMoves(true);
-		}else if(!isBlack && board.getGrayCount()!=0){
+		}else if(!board.getIsBlack() && board.getGrayCount()!=0){
 			board.setWhiteHasMoves(true);
 		}
 	}

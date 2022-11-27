@@ -47,10 +47,10 @@ public class Application extends JFrame implements ActionListener{
      {
          String s = e.getActionCommand();
          if (s.equals("Black")) {
-            if(!t.getText().equals("")){ //default depth is 3
+            if(!t.getText().equals("")){ 
                r = new ReversAI(true,Integer.parseInt(t.getText()));
             }else{
-               r = new ReversAI(true,3);
+               r = new ReversAI(true,-1);
             }
             f.setVisible(false);
          }
@@ -58,7 +58,7 @@ public class Application extends JFrame implements ActionListener{
             if(!t.getText().equals("")){
                r = new ReversAI(false,Integer.parseInt(t.getText()));
             }else{
-               r = new ReversAI(false,3);
+               r = new ReversAI(false,-1);
             }
             
             f.setVisible(false);

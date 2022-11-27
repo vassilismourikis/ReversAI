@@ -13,9 +13,15 @@ public class Move {
         this.value = value;
     }
 
+    Move(int pos, boolean contructor_differatiation)
+    {
+        this.pos = pos;
+        this.value = -1;
+    }
+
     Move(int value)
     {
-        this.pos = -1;
+        this.pos = 1;
         this.value = value;
     }
 
