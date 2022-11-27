@@ -33,6 +33,6 @@ The player with the most discs on the board at the end of the game wins. If both
 
 (Source: https://www.eothello.com/)
 
-### How to Launch the game
+## How to Launch the game
 
 To play the game run Application.java, if you want to play with 2 players just press black/white button. If you want to play with AI as opponent enter the depth you want to be used in the algorithm (something like game's difficulty) and choose which player you wanna be (Black or White).
